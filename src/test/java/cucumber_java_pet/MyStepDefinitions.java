@@ -46,6 +46,10 @@ public class MyStepDefinitions {
 
     @Given("I am a guest customer")
     public void iMAGuestCustomer() {
+        System.setProperty("webdriver.chrome.driver", "C:\\JavaGuru\\Soft\\chromedriver.exe");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.get("https://askomdch.com/store");
     }
 
     @And("I have a product in the cart")
@@ -92,12 +96,16 @@ public class MyStepDefinitions {
     }
 
     @And("I place an order")
-    public void iPlaceAnOrder() {
+    public void iPlaceAnOrder() throws InterruptedException {
         By placeOrderBtn = By.id("place_order");
         driver.findElement(placeOrderBtn).click();
+        Thread.sleep(5000);
     }
 
     @Then("order should be placed successfully")
-    public void orderShouldBePlacedSuccessfully() {
+    public void orderShouldBePlacedSuccessfully(){
+        By noticeTxt = By.cssSelector(".woocommerce-notice");
+        String actualNoticeMsg = driver.findElement(noticeTxt).getText();
+        Assert.assertEquals("Thank you. Your order has been received.", actualNoticeMsg);
     }
 }
