@@ -1,5 +1,9 @@
 package cucumber_java_pet;
 
+import cucumber_java_pet.factory.DriverFactory;
+import cucumber_java_pet.pages.CartPage;
+import cucumber_java_pet.pages.CheckoutPage;
+import cucumber_java_pet.pages.StorePage;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -20,92 +24,56 @@ public class MyStepDefinitions {
 
     @Given("I am on the Store page")
     public void iAmOnTheStorePage() {
-        System.setProperty("webdriver.chrome.driver", "C:\\JavaGuru\\Soft\\chromedriver.exe");
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://askomdch.com/store");
+        driver = DriverFactory.getDriver();
+        new StorePage(driver).load("https://askomdch.com/store");
     }
     @When("I add a {string} to the cart")
-    public void iAddAToTheCart(String productName) throws InterruptedException {
-        By addToCartBtn = By.cssSelector("a[aria-label='Add “Blue Shoes” to your cart']");
-        Thread.sleep(5000);
-        driver.findElement(addToCartBtn).click();
-        Thread.sleep(3000);
-        By viewCartLink = By.cssSelector("a[title='View cart']");
-        driver.findElement(viewCartLink).click();
+    public void iAddAToTheCart(String productName) {
+        new StorePage(driver).addToCart(productName);
     }
     @Then("I should see {int} {string} int the cart")
-    public void i_should_see_int_the_cart(Integer quantity, String productName) {
-        By productNameField = By.cssSelector("td[class='product-name'] a");
-        String actualProductName = driver.findElement(productNameField).getText();
-        By productQuantityFld = By.cssSelector("input[type=\"number\"]");
-        String actualQuantity = driver.findElement(productQuantityFld).getAttribute("value");
-        Assert.assertEquals(productName, actualProductName);
-        Integer.compare(quantity, Integer.parseInt(actualQuantity));
+    public void i_should_see_int_the_cart(int quantity, String productName) {
+        CartPage cartPage = new CartPage(driver);
+        Assert.assertEquals(productName, cartPage.getProductName());
+        Assert.assertEquals(quantity, cartPage.getProductQuantity());
+        //Integer.compare(quantity, cartPage.getProductQuantity());
     }
 
     @Given("I am a guest customer")
     public void iMAGuestCustomer() {
-        System.setProperty("webdriver.chrome.driver", "C:\\JavaGuru\\Soft\\chromedriver.exe");
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://askomdch.com/store");
+        driver = DriverFactory.getDriver();
+        new StorePage(driver).load("https://askomdch.com/store");
     }
 
     @And("I have a product in the cart")
-    public void iHaveAProductInTheCart() throws InterruptedException {
-        By addToCartBtn = By.cssSelector("a[aria-label='Add “Blue Shoes” to your cart']");
-        Thread.sleep(5000);
-        driver.findElement(addToCartBtn).click();
-        Thread.sleep(3000);
-        By viewCartLink = By.cssSelector("a[title='View cart']");
-        driver.findElement(viewCartLink).click();
+    public void iHaveAProductInTheCart() {
+        new StorePage(driver).addToCart("Blue Shoes");
     }
 
     @And("I am on the checkout page")
     public void iAmOnTheCheckoutPage() {
-        By proceedToCheckoutBtn = By.cssSelector(".checkout-button");
-        driver.findElement(proceedToCheckoutBtn).click();
+        new CartPage(driver).checkout();
     }
 
     @When("I provide billing details")
     public void iProvideBillingDetails(List<Map<String,String>> billingDetails) {
-        By billingFirstnameFld = By.id("billing_first_name");
-        By billingLastnameFld = By.id("billing_last_name");
-        By billingAddressOneFld = By.id("billing_address_1");
-        By billingCityFld = By.id("billing_city");
-        By billingStateDropdown = By.id("billing_state");
-        By billingZipFld = By.id("billing_postcode");
-        By billingEmailFld = By.id("billing_email");
-
-        driver.findElement(billingFirstnameFld).clear();
-        driver.findElement(billingFirstnameFld).sendKeys(billingDetails.get(0).get("firstname"));
-        driver.findElement(billingLastnameFld).clear();
-        driver.findElement(billingLastnameFld).sendKeys(billingDetails.get(0).get("lastname"));
-        driver.findElement(billingAddressOneFld).clear();
-        driver.findElement(billingAddressOneFld).sendKeys(billingDetails.get(0).get("address_line1"));
-        driver.findElement(billingCityFld).clear();
-        driver.findElement(billingCityFld).sendKeys(billingDetails.get(0).get("city"));
-        Select select = new Select(driver.findElement(billingStateDropdown));
-        select.selectByVisibleText(billingDetails.get(0).get("state"));
-        driver.findElement(billingZipFld).clear();
-        driver.findElement(billingZipFld).sendKeys(billingDetails.get(0).get("zip"));
-        driver.findElement(billingEmailFld).clear();
-        driver.findElement(billingEmailFld).sendKeys(billingDetails.get(0).get("email"));
-
+        CheckoutPage checkoutPage = new CheckoutPage(driver);
+        checkoutPage.setBillingDetails(billingDetails.get(0).get("firstname"),
+                billingDetails.get(0).get("lastname"),
+                billingDetails.get(0).get("address_line1"),
+                billingDetails.get(0).get("city"),
+                billingDetails.get(0).get("state"),
+                billingDetails.get(0).get("zip"),
+                billingDetails.get(0).get("email"));
     }
 
     @And("I place an order")
     public void iPlaceAnOrder() throws InterruptedException {
-        By placeOrderBtn = By.id("place_order");
-        driver.findElement(placeOrderBtn).click();
-        Thread.sleep(5000);
+        new CheckoutPage(driver).placeOrder();
     }
 
     @Then("order should be placed successfully")
     public void orderShouldBePlacedSuccessfully(){
-        By noticeTxt = By.cssSelector(".woocommerce-notice");
-        String actualNoticeMsg = driver.findElement(noticeTxt).getText();
-        Assert.assertEquals("Thank you. Your order has been received.", actualNoticeMsg);
+        Assert.assertEquals("Thank you. Your order has been received.", new CheckoutPage(driver).getNotice());
     }
 }
