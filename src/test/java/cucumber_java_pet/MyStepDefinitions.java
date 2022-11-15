@@ -1,5 +1,6 @@
 package cucumber_java_pet;
 
+import cucumber_java_pet.domain_objects.BillingDetails;
 import cucumber_java_pet.factory.DriverFactory;
 import cucumber_java_pet.pages.CartPage;
 import cucumber_java_pet.pages.CheckoutPage;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 public class MyStepDefinitions {
     private static WebDriver driver;
+    private BillingDetails billingDetails;
 
     @Given("I am on the Store page")
     public void iAmOnTheStorePage() {
@@ -45,6 +47,11 @@ public class MyStepDefinitions {
         new StorePage(driver).load("https://askomdch.com/store");
     }
 
+    @And("my billing details are")
+    public void myBillingDetailsAre(BillingDetails billingDetails) {
+        this.billingDetails = billingDetails;
+    }
+
     @And("I have a product in the cart")
     public void iHaveAProductInTheCart() {
         new StorePage(driver).addToCart("Blue Shoes");
@@ -56,15 +63,9 @@ public class MyStepDefinitions {
     }
 
     @When("I provide billing details")
-    public void iProvideBillingDetails(List<Map<String,String>> billingDetails) {
+    public void iProvideBillingDetails() {
         CheckoutPage checkoutPage = new CheckoutPage(driver);
-        checkoutPage.setBillingDetails(billingDetails.get(0).get("firstname"),
-                billingDetails.get(0).get("lastname"),
-                billingDetails.get(0).get("address_line1"),
-                billingDetails.get(0).get("city"),
-                billingDetails.get(0).get("state"),
-                billingDetails.get(0).get("zip"),
-                billingDetails.get(0).get("email"));
+        checkoutPage.setBillingDetails(billingDetails);
     }
 
     @And("I place an order")
@@ -76,4 +77,6 @@ public class MyStepDefinitions {
     public void orderShouldBePlacedSuccessfully(){
         Assert.assertEquals("Thank you. Your order has been received.", new CheckoutPage(driver).getNotice());
     }
+
+
 }

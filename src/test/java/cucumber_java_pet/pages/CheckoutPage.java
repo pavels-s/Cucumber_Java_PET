@@ -1,5 +1,6 @@
 package cucumber_java_pet.pages;
 
+import cucumber_java_pet.domain_objects.BillingDetails;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -70,16 +71,14 @@ public class CheckoutPage extends BasePage{
         return this;
     }
 
-    public CheckoutPage setBillingDetails(String billingFirstName, String billingLastName, String billingAddressOne,
-                                          String billingCity, String billingStateName, String billingZip,
-                                          String billingEmail){
-        return enterBillingFirstName(billingFirstName).
-                enterBillingLastName(billingLastName).
-                enterBillingAddressLineOne(billingAddressOne).
-                enterBillingCity(billingCity).
-                enterBillingState(billingStateName).
-                enterBillingZip(billingZip).
-                enterBillingEmail(billingEmail);
+    public CheckoutPage setBillingDetails(BillingDetails billingDetails){
+        return enterBillingFirstName(billingDetails.getBillingFirstName()).
+                enterBillingLastName(billingDetails.getBillingLastName()).
+                enterBillingAddressLineOne(billingDetails.getBillingAddressOne()).
+                enterBillingCity(billingDetails.getBillingCity()).
+                enterBillingState(billingDetails.getBillingStateName()).
+                enterBillingZip(billingDetails.getBillingZip()).
+                enterBillingEmail(billingDetails.getBillingEmail());
     }
 
     public CheckoutPage placeOrder(){
