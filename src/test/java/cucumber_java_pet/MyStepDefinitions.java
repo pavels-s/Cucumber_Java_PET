@@ -1,6 +1,7 @@
 package cucumber_java_pet;
 
 import cucumber_java_pet.domain_objects.BillingDetails;
+import cucumber_java_pet.domain_objects.Product;
 import cucumber_java_pet.factory.DriverFactory;
 import cucumber_java_pet.pages.CartPage;
 import cucumber_java_pet.pages.CheckoutPage;
@@ -29,14 +30,15 @@ public class MyStepDefinitions {
         driver = DriverFactory.getDriver();
         new StorePage(driver).load("https://askomdch.com/store");
     }
-    @When("I add a {string} to the cart")
-    public void iAddAToTheCart(String productName) {
-        new StorePage(driver).addToCart(productName);
+    @When("I add a {product} to the cart")
+    public void iAddAToTheCart(Product product) {
+        new StorePage(driver).addToCart(product.getName());
     }
-    @Then("I should see {int} {string} int the cart")
-    public void i_should_see_int_the_cart(int quantity, String productName) {
+
+    @Then("I should see {int} {product} int the cart")
+    public void i_should_see_int_the_cart(int quantity, Product product) {
         CartPage cartPage = new CartPage(driver);
-        Assert.assertEquals(productName, cartPage.getProductName());
+        Assert.assertEquals(product.getName(), cartPage.getProductName());
         Assert.assertEquals(quantity, cartPage.getProductQuantity());
         //Integer.compare(quantity, cartPage.getProductQuantity());
     }
