@@ -1,6 +1,8 @@
 package cucumber_java_pet.pages;
 
 import cucumber_java_pet.domain_objects.BillingDetails;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -13,6 +15,7 @@ public class CheckoutPage extends BasePage{
     @FindBy(id = "billing_address_1") private WebElement billingAddressOneFld;
     @FindBy(id = "billing_city") private WebElement billingCityFld;
     @FindBy(id = "billing_state") private WebElement billingStateDropDown;
+    @FindBy(id = "select2-billing_state-container") private WebElement alternateBillingStateDropDown;
     @FindBy(id = "billing_postcode") private WebElement billingZipFld;
     @FindBy(id = "billing_email") private WebElement billingEmailFld;
     @FindBy(id = "place_order") private WebElement placeOrderBtn;
@@ -52,8 +55,14 @@ public class CheckoutPage extends BasePage{
     }
 
     public CheckoutPage enterBillingState(String billingStateName){
-        Select select = new Select(wait.until(ExpectedConditions.visibilityOf(billingStateDropDown)));
-        select.selectByVisibleText(billingStateName);
+        wait.until(ExpectedConditions.elementToBeClickable(alternateBillingStateDropDown)).click();
+        WebElement e = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//li[text()='" + billingStateName + "']")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", e);
+        e.click();
+
+//        Select select = new Select(wait.until(ExpectedConditions.visibilityOf(billingStateDropDown)));
+//        select.selectByVisibleText(billingStateName);
         return this;
     }
 

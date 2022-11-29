@@ -1,5 +1,7 @@
 package cucumber_java_pet;
 
+import cucumber_java_pet.constants.EndPoint;
+import cucumber_java_pet.constants.MyConstants;
 import cucumber_java_pet.domain_objects.BillingDetails;
 import cucumber_java_pet.domain_objects.Product;
 import cucumber_java_pet.factory.DriverFactory;
@@ -28,7 +30,7 @@ public class MyStepDefinitions {
     @Given("I am on the Store page")
     public void iAmOnTheStorePage() {
         driver = DriverFactory.getDriver();
-        new StorePage(driver).load("https://askomdch.com/store");
+        new StorePage(driver).load(MyConstants.STORE);
     }
     @When("I add a {product} to the cart")
     public void iAddAToTheCart(Product product) {
@@ -46,7 +48,7 @@ public class MyStepDefinitions {
     @Given("I am a guest customer")
     public void iMAGuestCustomer() {
         driver = DriverFactory.getDriver();
-        new StorePage(driver).load("https://askomdch.com/store");
+        new StorePage(driver).load(EndPoint.STORE.url);
     }
 
     @And("my billing details are")
