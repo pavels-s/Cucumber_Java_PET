@@ -16,10 +16,11 @@ public class StorePage extends BasePage {
     }
 
     public void addToCart(String productName){
-        String raw = "a[aria-label='Add " + productName + " to your cart']";
-        byte[] bytes = raw.getBytes(StandardCharsets.UTF_8);
-        String utf8Encoded = new String(bytes, StandardCharsets.UTF_8);
-        By addToCartBtn = By.cssSelector(utf8Encoded);
+//        String raw = "a[aria-label='Add “" + productName + "“ to your cart']";
+//        byte[] bytes = raw.getBytes(StandardCharsets.UTF_8);
+//        String utf8Encoded = new String(bytes, StandardCharsets.UTF_8);
+//        By addToCartBtn = By.cssSelector(utf8Encoded);
+        By addToCartBtn = By.cssSelector("a[aria-label='Add “" + productName +"” to your cart']");
         wait.until(ExpectedConditions.elementToBeClickable(addToCartBtn)).click();
         wait.until(ExpectedConditions.elementToBeClickable(viewCartLink)).click();
     }

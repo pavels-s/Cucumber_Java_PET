@@ -20,6 +20,7 @@ public class CheckoutPage extends BasePage{
     @FindBy(id = "billing_email") private WebElement billingEmailFld;
     @FindBy(id = "place_order") private WebElement placeOrderBtn;
     @FindBy(css = ".woocommerce-notice") private WebElement noticeTxt;
+    private final By overlay = By.cssSelector(".blockUI.blockOverlay");
 
 
     public CheckoutPage(WebDriver driver) {
@@ -91,6 +92,7 @@ public class CheckoutPage extends BasePage{
     }
 
     public CheckoutPage placeOrder(){
+        waitForOverlaysToDisappear(overlay);
         wait.until(ExpectedConditions.elementToBeClickable(placeOrderBtn)).click();
         return this;
     }
